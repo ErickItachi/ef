@@ -48,7 +48,8 @@ function FilmCard({ film, index }: { film: Film; index: number }) {
           </div>
           <span className="film__shade" aria-hidden="true" />
           <span className="film__duration" aria-hidden="true">
-            {film.duration}
+            {film.ultraHd && <span className="film__quality">4K</span>}
+            <span>{film.duration}</span>
           </span>
         </div>
         <Reveal className="film__info" start="top 88%">

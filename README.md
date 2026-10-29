@@ -21,9 +21,11 @@ npm run dev
 
 ## Qualidade e movimento
 
-A abertura mostra somente o batismo, com prévia 4K. Os três filmes continuam no portfólio. As prévias usam trechos sem títulos ou legendas adicionadas; a seleção está em [`docs/media-previews.md`](docs/media-previews.md).
+A abertura mostra somente o batismo, com prévia 4K. Larissa e Roger e o batismo compõem o portfólio. As prévias usam trechos sem títulos ou legendas adicionadas; a seleção está em [`docs/media-previews.md`](docs/media-previews.md).
 
-Arena XP e batismo têm filme e prévia em 3840 × 2160. O melhor original disponível de Larissa e Roger é 1920 × 1080; a prévia foi refeita a partir desse master, sem ampliação artificial. O player abre na maior resolução disponível em qualquer dispositivo e permite trocar a qualidade preservando a posição. O modo de economia de dados inicia o player em 720p.
+O batismo tem filme e prévia em 3840 × 2160. O melhor original disponível de Larissa e Roger é 1920 × 1080; a prévia foi refeita a partir desse master, sem ampliação artificial. O player abre na maior resolução disponível em qualquer dispositivo e permite trocar a qualidade preservando a posição. O modo de economia de dados inicia o player em 720p.
+
+Durante o carregamento, o player mantém a capa e informa o estado do vídeo. Falhas oferecem uma nova tentativa sem sair da página. A navegação por teclado leva o foco ao título da seção escolhida no menu.
 
 As prévias carregam ao entrar na tela, pausam ao sair, ao abrir o menu ou ocultar a aba, e liberam os recursos quando ficam distantes. Movimento reduzido e economia de dados mantêm as imagens estáticas; os filmes completos continuam disponíveis ao clicar. Toque usa rolagem nativa; mouse e trackpad usam Lenis.
 
@@ -41,4 +43,3 @@ O projeto Vercel `erick-filmes` está conectado a `ErickItachi/ef`, branch `main
 ## A confirmar
 - E-mail oficial de contato
 - Créditos e ano de cada filme (dados vindos do site da DUUK, onde estavam "a definir")
-- Categoria de "arena xp" (está como "show ao vivo")

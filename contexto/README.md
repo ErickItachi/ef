@@ -35,7 +35,7 @@ Esta pasta reúne tudo o que foi criado para a Erick Filmes (marca pessoal do fi
 
 - **Site Erick Filmes:** este repositório (`ErickItachi/ef`), Next.js 16 + React 19 + TypeScript + GSAP + Lenis. Publicado na Vercel (time "duuk", projeto `erick-filmes`): https://erick-filmes.vercel.app. Cada push no `main` publica.
   - Narrativa: abertura (tela 1.85:1 que se abre com a rolagem) → o olhar → a pessoa (história) → filmes → contato. Transição de página com o xadrez.
-  - Portfólio inicial: Casamento (Larissa e Roger), Batismo (Igreja Burn), Arena XP. Vídeos em `public/media/films/`.
+  - Portfólio atual: Casamento (Larissa e Roger) e Batismo (Igreja Burn). Vídeos em `public/media/films/`.
   - Instagram: @oerickfilme · links: linktr.ee/oerickfilm.
 - **Site DUUK Films** (`ErickItachi/duuk`, duukfilms.com): marca separada, onde o Erick é diretor. Regras no `AGENTS.md` daquele repo (publicar via `main`; painel admin só na branch `preview/admin-panel`). Última mudança: vídeos sempre em alta qualidade.
 - **Canvas da IDV** (claude.ai, privado do Erick): https://claude.ai/artifact/FUEkP3Gp1ncd4v1szkJRTD — o PDF desta pasta é a exportação dele.
@@ -43,7 +43,7 @@ Esta pasta reúne tudo o que foi criado para a Erick Filmes (marca pessoal do fi
 ## Pendências / a confirmar
 
 - E-mail oficial de contato (variável `NEXT_PUBLIC_CONTACT_EMAIL` na Vercel).
-- Créditos e ano de cada filme; categoria da Arena XP (está "show ao vivo").
+- Créditos e ano de cada filme.
 - Domínio próprio para o site.
 - Ajuste fino do alinhamento da abertura no desktop; rodar Lighthouse.
 - Mockups em foto real de camiseta, garrafa, xícara, caneta, papelaria e adesivos (aguardando fotos do Erick).

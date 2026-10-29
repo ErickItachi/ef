@@ -149,7 +149,8 @@ html.hero-expanded .header { color: var(--cream); }
 .film__video { opacity: 0; transition: opacity .6s; }
 .film__video.is-active.is-on { opacity: 1; }
 .film__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.5), transparent 45%); }
-.film__duration { position: absolute; right: 14px; top: 14px; font-family: var(--display); font-size: 18px; }
+.film__duration { position: absolute; right: 14px; top: 14px; display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 18px; }
+.film__quality { padding: 3px 6px; border: 1px solid rgba(238,234,225,.6); font-family: var(--text); font-size: 10px; font-weight: 600; letter-spacing: .08em; line-height: 1; }
 .film__info { padding: 22px var(--gutter) 0; display: grid; gap: 8px; }
 .film__num { font-size: 24px; color: rgba(238,234,225,.5); }
 .film__title { font-size: clamp(52px, 15vw, 170px); }
@@ -197,11 +198,15 @@ html.hero-expanded .header { color: var(--cream); }
 .player__play { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--cream); background: rgba(0,0,0,.25); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; transition: background .3s; }
 .player__poster:hover .player__play { background: rgba(0,0,0,.4); }
 .player__symbol { width: 96px; }
-.player__toolbar { display: flex; justify-content: flex-end; padding-top: 16px; color: var(--cream); }
+.player__toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 16px; padding-top: 16px; color: var(--cream); }
+.player__status { min-height: 1.5em; font-size: 12px; opacity: .75; }
 .player__toolbar label { display: flex; align-items: center; gap: 12px; font-size: 12px; letter-spacing: .1em; }
 .player__toolbar select { min-height: 44px; padding: 8px 32px 8px 12px; border: 1px solid rgba(238,234,225,.35); border-radius: 0; background: var(--ink); color: var(--cream); font: inherit; }
 .player__error { color: var(--cream); padding-top: 12px; }
 .player__error a { text-decoration: underline; }
+.player__recovery { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 12px; font-size: 13px; }
+.player__recovery button { min-height: 44px; padding: 10px 16px; border: 1px solid rgba(238,234,225,.5); transition: background .2s ease; }
+.player__recovery button:hover, .player__recovery button:focus-visible { background: rgba(238,234,225,.12); }
 .finfo { background: var(--cream); padding: 96px var(--gutter); }
 .finfo__grid { display: grid; gap: 40px; }
 .finfo__logline { font-size: clamp(44px, 11vw, 120px); color: var(--blue); }

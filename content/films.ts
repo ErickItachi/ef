@@ -49,21 +49,6 @@ export const films: Film[] = [
     focus: '50% 50%',
     credits: [],
   },
-  {
-    slug: 'arena-xp',
-    ultraHd: true,
-    title: 'arena xp',
-    category: 'show ao vivo',
-    client: 'Jhamal Andrade',
-    year: '2026',
-    logline: 'luz, palco e uma voz que não para.',
-    description: 'Filme feito para o ministro Jhamal Andrade, no palco da Arena XP.',
-    duration: '0:39',
-    poster: 'arena-xp',
-    posterAlt: 'Artista ajoelhado no palco sob holofotes',
-    focus: '50% 50%',
-    credits: [],
-  },
 ]
 
 export const filmMedia = (slug: string) => {

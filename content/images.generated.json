@@ -1,11 +1,4 @@
 {
-  "arena-xp": {
-    "src": "/media/img/arena-xp-2048.webp",
-    "srcSet": "/media/img/arena-xp-480.webp 480w, /media/img/arena-xp-960.webp 960w, /media/img/arena-xp-1440.webp 1440w, /media/img/arena-xp-2048.webp 2048w",
-    "width": 3840,
-    "height": 2160,
-    "placeholder": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAwAwCdASoYAA4APu1iqU2ppaQiMAgBMB2JZwAAW7l3iaUwAMtEdo/9ZFGb+Eyie2HmqYBgQ+i5JRdq+SM3ArOYAAA="
-  },
   "erick-retrato": {
     "src": "/media/img/erick-retrato-576.webp",
     "srcSet": "/media/img/erick-retrato-480.webp 480w, /media/img/erick-retrato-576.webp 576w",

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { usePageTransition } from './PageTransition'
 import { useMotion } from './MotionProvider'
@@ -12,6 +13,11 @@ export default function TransitionLink({ href, onClick, onNavigate, children, ..
   const pathname = usePathname()
   const { navigate } = usePageTransition()
   const { scrollTo } = useMotion()
+  const focusFrame = useRef<number | null>(null)
+
+  useEffect(() => () => {
+    if (focusFrame.current !== null) cancelAnimationFrame(focusFrame.current)
+  }, [])
 
   const handle = (e: React.MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e)
@@ -24,6 +30,22 @@ export default function TransitionLink({ href, onClick, onNavigate, children, ..
       if (hash) {
         scrollTo(`#${hash}`)
         history.replaceState(null, '', `#${hash}`)
+        if (e.detail === 0) {
+          if (focusFrame.current !== null) cancelAnimationFrame(focusFrame.current)
+          // Let the closing menu release its focus trap before moving to the heading.
+          focusFrame.current = requestAnimationFrame(() => {
+            focusFrame.current = requestAnimationFrame(() => {
+              focusFrame.current = null
+              const section = document.getElementById(hash)
+              const target = section?.querySelector<HTMLElement>('h1, h2') || section
+              if (!target) return
+              const temporary = !target.hasAttribute('tabindex')
+              if (temporary) target.setAttribute('tabindex', '-1')
+              target.focus({ preventScroll: true })
+              if (temporary) target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true })
+            })
+          })
+        }
       } else scrollTo(0)
       return
     }
