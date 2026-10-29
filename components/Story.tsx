@@ -5,6 +5,7 @@ import { gsap, useGSAP, prefersReducedMotion, isLowPower } from '@/lib/motion'
 import Picture from './Picture'
 import Reveal from './Reveal'
 import { Lines } from './Split'
+import { useMotion } from './MotionProvider'
 
 // Texts: Erick's own bio and the brand voice document. Nothing here is invented.
 const chapters = [
@@ -28,6 +29,7 @@ const chapters = [
 
 export default function Story() {
   const root = useRef<HTMLElement>(null)
+  const { reduced } = useMotion()
 
   useGSAP(
     () => {
@@ -36,7 +38,7 @@ export default function Story() {
         gsap.fromTo(img, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } })
       })
     },
-    { scope: root },
+    { scope: root, dependencies: [reduced], revertOnUpdate: true },
   )
 
   return (

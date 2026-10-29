@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger, registerGsap, prefersReducedMotion, isFinePointer } from '@/lib/motion'
 
@@ -29,13 +29,12 @@ export default function MotionProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     // smooth scroll only where it helps: mouse/trackpad, motion allowed. Touch keeps native scrolling.
-    if (reduced || !isFinePointer()) return
+    if (reduced || prefersReducedMotion() || !isFinePointer()) return
     const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9, anchors: false })
     lenisRef.current = lenis
     lenis.on('scroll', ScrollTrigger.update)
     const tick = (time: number) => lenis.raf(time * 1000)
     gsap.ticker.add(tick)
-    gsap.ticker.lagSmoothing(0)
     return () => {
       gsap.ticker.remove(tick)
       lenis.destroy()
@@ -57,7 +56,7 @@ export default function MotionProvider({ children }: { children: React.ReactNode
       return
     }
     if (lenisRef.current) {
-      lenisRef.current.scrollTo((el ?? target) as HTMLElement | number, { immediate: opts.immediate || prefersReducedMotion(), offset: opts.offset ?? 0, duration: 1.4 })
+      lenisRef.current.scrollTo((el ?? target) as HTMLElement | number, { immediate: opts.immediate || prefersReducedMotion(), offset: opts.offset ?? 0, duration: 1.05 })
     } else {
       const top = typeof target === 'number' ? target : (el as HTMLElement).getBoundingClientRect().top + window.scrollY + (opts.offset ?? 0)
       window.scrollTo({ top, behavior: opts.immediate || prefersReducedMotion() ? 'auto' : 'smooth' })
@@ -72,5 +71,6 @@ export default function MotionProvider({ children }: { children: React.ReactNode
     document.documentElement.classList.toggle('is-locked', locked)
   }, [])
 
-  return <MotionContext.Provider value={{ reduced, scrollTo, lock }}>{children}</MotionContext.Provider>
+  const value = useMemo(() => ({ reduced, scrollTo, lock }), [reduced, scrollTo, lock])
+  return <MotionContext.Provider value={value}>{children}</MotionContext.Provider>
 }

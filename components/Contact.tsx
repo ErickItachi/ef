@@ -16,6 +16,13 @@ export default function Contact() {
         </h2>
         <ul className="contact__links" data-fade>
           <li>
+            <a href={site.phone.whatsapp} target="_blank" rel="noreferrer">
+              <span className="contact__kind">whatsapp</span>
+              <span className="contact__value">{site.phone.display}</span>
+              <span className="contact__arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
             <a href={site.instagram.url} target="_blank" rel="noreferrer">
               <span className="contact__kind">instagram</span>
               <span className="contact__value">{site.instagram.handle}</span>
@@ -31,13 +38,6 @@ export default function Contact() {
               </a>
             </li>
           )}
-          <li>
-            <a href={site.linktree} target="_blank" rel="noreferrer">
-              <span className="contact__kind">links</span>
-              <span className="contact__value">linktr.ee/oerickfilm</span>
-              <span className="contact__arrow" aria-hidden="true">↗</span>
-            </a>
-          </li>
         </ul>
       </Reveal>
 
@@ -48,6 +48,7 @@ export default function Contact() {
           <p>
             Erick Filmes · {site.city}
             <br />© {new Date().getFullYear()} Erick Borborema
+            <br /><span className="footer__legal">CNPJ {site.cnpj}</span>
           </p>
           <TransitionLink href="/#topo" className="footer__top">
             voltar ao início <span aria-hidden="true">↑</span>

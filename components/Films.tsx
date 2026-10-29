@@ -1,42 +1,18 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { films, filmMedia, type Film } from '@/content/films'
-import { gsap, useGSAP, prefersReducedMotion, saveData, isLowPower } from '@/lib/motion'
+import { gsap, useGSAP, prefersReducedMotion, isLowPower } from '@/lib/motion'
 import Picture from './Picture'
 import Reveal from './Reveal'
 import TransitionLink from './TransitionLink'
 import { Lines, Words } from './Split'
+import PreviewVideo from './PreviewVideo'
+import { useMotion } from './MotionProvider'
 
 function FilmCard({ film, index }: { film: Film; index: number }) {
   const root = useRef<HTMLElement>(null)
-  const video = useRef<HTMLVideoElement>(null)
-  const [near, setNear] = useState(false)
-  const [allowed, setAllowed] = useState(false)
-
-  useEffect(() => setAllowed(!prefersReducedMotion() && !saveData()), [])
-
-  // load the preview only when the film gets close, play it only while it is really on screen
-  useEffect(() => {
-    if (!allowed) return
-    const el = root.current!
-    const nearObs = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: '300px 0px' })
-    const playObs = new IntersectionObserver(
-      ([e]) => {
-        const v = video.current
-        if (!v) return
-        if (e.intersectionRatio > 0.55) v.play().catch(() => {})
-        else v.pause()
-      },
-      { threshold: [0, 0.55, 1] },
-    )
-    nearObs.observe(el)
-    playObs.observe(el.querySelector('.film__frame')!)
-    return () => {
-      nearObs.disconnect()
-      playObs.disconnect()
-    }
-  }, [allowed, near])
+  const { reduced } = useMotion()
 
   useGSAP(
     () => {
@@ -50,9 +26,9 @@ function FilmCard({ film, index }: { film: Film; index: number }) {
         { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'center 55%', scrub: light ? true : 0.4 } },
       )
       if (!light)
-        gsap.fromTo(el.querySelectorAll('.film__layer'), { scale: 1.22 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: true } })
+        gsap.fromTo(el.querySelector('.film__visual'), { scale: 1.08 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: true } })
     },
-    { scope: root },
+    { scope: root, dependencies: [reduced], revertOnUpdate: true },
   )
 
   const media = filmMedia(film.slug)
@@ -60,22 +36,16 @@ function FilmCard({ film, index }: { film: Film; index: number }) {
     <article ref={root} className={`film film--${index % 2 ? 'right' : 'left'}`}>
       <TransitionLink href={`/filmes/${film.slug}`} className="film__link" aria-label={`Assistir ${film.title} — ${film.category}`}>
         <div className="film__frame">
-          <Picture name={film.poster} alt={film.posterAlt} sizes="(min-width: 960px) 86vw, 100vw" className="film__layer film__poster" style={{ objectPosition: film.focus }} />
-          {allowed && near && (
-            <video
-              ref={video}
+          <div className="film__visual">
+            <Picture name={film.poster} alt={film.posterAlt} sizes="(min-width: 960px) 86vw, 100vw" className="film__layer film__poster" style={{ objectPosition: film.focus }} />
+            <PreviewVideo
               className="film__layer film__video"
-              src={media.preview}
-              muted
+              src={media.previewUhd || media.preview}
+              fallbackSrc={media.preview}
               loop
-              playsInline
-              preload="metadata"
-              aria-hidden="true"
-              tabIndex={-1}
-              onPlaying={(e) => e.currentTarget.classList.add('is-on')}
               style={{ objectPosition: film.focus }}
             />
-          )}
+          </div>
           <span className="film__shade" aria-hidden="true" />
           <span className="film__duration" aria-hidden="true">
             {film.duration}

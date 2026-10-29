@@ -55,7 +55,7 @@ export const viewport: Viewport = {
 }
 
 // Before the first paint: mark JS and, unless motion is reduced, keep the checker closed for the opening.
-const boot = `(()=>{const d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('ef-seen')){d.classList.add('js-intro');try{sessionStorage.setItem('ef-seen','1')}catch(e){}setTimeout(()=>d.classList.remove('js-intro'),3500)}})()`
+const boot = `(()=>{const d=document.documentElement;d.classList.add('js');let seen=false;try{seen=!!sessionStorage.getItem('ef-seen')}catch(e){}if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!seen){d.classList.add('js-intro');try{sessionStorage.setItem('ef-seen','1')}catch(e){}setTimeout(()=>d.classList.remove('js-intro'),3500)}})()`
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -65,7 +65,15 @@ const jsonLd = {
   brand: { '@type': 'Brand', name: site.name },
   address: { '@type': 'PostalAddress', addressLocality: 'São Paulo', addressCountry: 'BR' },
   url: site.url,
-  sameAs: [site.instagram.url, site.linktree],
+  telephone: site.phone.international,
+  sameAs: [site.instagram.url],
+  worksFor: {
+    '@type': 'Organization',
+    name: site.name,
+    taxID: site.cnpj,
+    telephone: site.phone.international,
+    url: site.url,
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

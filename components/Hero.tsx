@@ -1,9 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { films, filmMedia } from '@/content/films'
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, saveData, isLowPower } from '@/lib/motion'
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, isLowPower } from '@/lib/motion'
 import Picture from './Picture'
+import PreviewVideo from './PreviewVideo'
+import { useMotion } from './MotionProvider'
 
 /** "erick filmes" split into letters, keeping the f+i ligature together as one piece. */
 function TitleLetters({ word }: { word: string }) {
@@ -27,28 +29,9 @@ function TitleLetters({ word }: { word: string }) {
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null)
-  const [reel, setReel] = useState(0)
-  const [playReel, setPlayReel] = useState(false)
-  const videos = useRef<(HTMLVideoElement | null)[]>([])
-
-  // which film the screen is showing
-  useEffect(() => {
-    if (prefersReducedMotion() || saveData()) return
-    setPlayReel(true)
-  }, [])
-
-  useEffect(() => {
-    if (!playReel) return
-    videos.current.forEach((v, i) => {
-      if (!v) return
-      if (i === reel) {
-        v.currentTime = 0
-        v.play().catch(() => {})
-      } else if (i === (reel + 1) % films.length) {
-        v.preload = 'auto'                 // warm up only the next one
-      } else v.pause()
-    })
-  }, [reel, playReel])
+  const { reduced } = useMotion()
+  const current = films.find((film) => film.slug === 'igreja-burn')!
+  const openingMedia = filmMedia(current.slug)
 
   useGSAP(
     () => {
@@ -56,6 +39,7 @@ export default function Hero() {
       const stage = el.querySelector<HTMLElement>('.hero__stage')!
       const media = el.querySelector<HTMLElement>('.hero__media')!
       const win = el.querySelector<HTMLElement>('.hero__window')!
+      const visual = el.querySelector<HTMLElement>('.hero__visual')!
       const letters = el.querySelectorAll('.hero__title .ch')
       const fades = el.querySelectorAll('.hero__fade')
       const reduced = prefersReducedMotion()
@@ -71,10 +55,34 @@ export default function Hero() {
         const mid = w.top - s.top + w.height / 2
         return `inset(${mid}px ${s.right - w.right}px ${s.height - mid}px ${w.left - s.left}px)`
       }
+      const windowBounds = () => {
+        const s = stage.getBoundingClientRect()
+        const w = win.getBoundingClientRect()
+        return { left: w.left - s.left, top: w.top - s.top, width: w.width, height: w.height }
+      }
       gsap.set(media, { clipPath: insetOf() })
+      gsap.set(visual, windowBounds())
       const heroFlag = (on: boolean) => document.documentElement.classList.toggle('hero-active', on)
+      const updateHeaderContrast = () => {
+        const header = document.querySelector<HTMLElement>('.header')
+        if (!header) return
+        const headerBounds = header.getBoundingClientRect()
+        const stageBounds = stage.getBoundingClientRect()
+        const middle = headerBounds.top + headerBounds.height / 2
+        const clipTop = Number.parseFloat(media.style.clipPath.match(/inset\(\s*([-\d.]+)/)?.[1] || '0')
+        document.documentElement.classList.toggle('hero-expanded', stageBounds.top + clipTop <= middle && stageBounds.bottom > middle)
+      }
       if (reduced) {
-        ScrollTrigger.create({ trigger: el, start: 'top top', end: 'bottom top', onUpdate: (self) => heroFlag(self.progress < 0.5) })
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top top',
+          end: 'bottom top',
+          onUpdate: (self) => heroFlag(self.progress < 0.5),
+          onRefresh: () => {
+            gsap.set(media, { clipPath: insetOf() })
+            gsap.set(visual, windowBounds())
+          },
+        })
         return
       }
 
@@ -82,23 +90,41 @@ export default function Hero() {
       gsap.set(letters, { yPercent: 110 })
       gsap.set(fades, { autoAlpha: 0, y: 14 })
       gsap.set(media, { clipPath: closedOf() })
-      const intro = (delay: number) =>
-        gsap.timeline({ delay })
-          .to(letters, { yPercent: 0, duration: 1.15, ease: 'expo.out', stagger: 0.045 })
-          .to(media, { clipPath: insetOf(), duration: 1.25, ease: 'expo.inOut' }, 0.25)
-          .to(fades, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.08 }, 0.7)
+      let introTimeline: gsap.core.Timeline | undefined
       let started = false
+      let introInterrupted = false
+      const interruptIntro = () => {
+        if (introInterrupted) return
+        introInterrupted = true
+        started = true
+        introTimeline?.kill()
+        introTimeline = undefined
+        window.clearTimeout(failsafe)
+        gsap.set(letters, { yPercent: 0 })
+        gsap.set(fades, { y: 0 })
+      }
+      const intro = (delay: number) => {
+        introTimeline = gsap.timeline({ delay })
+          .to(letters, { yPercent: 0, duration: 0.9, ease: 'expo.out', stagger: 0.035 })
+          .to(media, { clipPath: insetOf(), duration: 1, ease: 'power3.inOut' }, 0.15)
+          .to(fades, { autoAlpha: 1, y: 0, duration: 0.65, stagger: 0.07 }, 0.45)
+      }
       const onReveal = (e: Event) => {
         if (started) return
+        if (window.scrollY > 2) {
+          interruptIntro()
+          return
+        }
         started = true
         intro((e as CustomEvent).detail?.delay ?? 0)
       }
       document.addEventListener('ef:reveal', onReveal, { once: true })
-      const failsafe = window.setTimeout(() => onReveal(new CustomEvent('ef:reveal', { detail: { delay: 0 } })), 2500)
+      const failsafe = window.setTimeout(() => onReveal(new CustomEvent('ef:reveal', { detail: { delay: 0 } })), 500)
 
       // scroll: the screen opens to the whole frame and the title leaves
       const light = isLowPower()
       const tl = gsap.timeline({
+        onUpdate: updateHeaderContrast,
         scrollTrigger: {
           trigger: el,
           start: 'top top',
@@ -107,29 +133,48 @@ export default function Hero() {
           pin: stage,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          onUpdate: (self) => heroFlag(self.progress < 0.45),
+          onUpdate: (self) => {
+            heroFlag(self.progress < 0.45)
+            if (self.progress > 0.015) interruptIntro()
+          },
         },
       })
       tl.fromTo(media, { clipPath: () => insetOf() }, { clipPath: 'inset(0px 0px 0px 0px)', ease: 'power2.inOut', duration: 1, immediateRender: false }, 0)
-        .fromTo(media.querySelectorAll('.hero__layer'), { scale: 1.14 }, { scale: 1, ease: 'none', duration: 1 }, 0)
+        .fromTo(visual, {
+          left: () => windowBounds().left,
+          top: () => windowBounds().top,
+          width: () => windowBounds().width,
+          height: () => windowBounds().height,
+        }, { left: 0, top: 0, width: '100%', height: '100%', ease: 'power2.inOut', duration: 1 }, 0)
         .to(el.querySelector('.hero__title'), { yPercent: -30, autoAlpha: 0, ease: 'power2.in', duration: 0.55 }, 0)
-        .to(fades, { autoAlpha: 0, duration: 0.3 }, 0)
+        .fromTo(fades, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: 0, duration: 0.3, immediateRender: false }, 0)
         .fromTo(el.querySelector('.hero__over'), { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 0.62)
 
+      // The header stays legible through the pinned video and its final scroll out.
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top top',
+        end: 'bottom top',
+        onUpdate: updateHeaderContrast,
+        onRefresh: updateHeaderContrast,
+        onEnterBack: updateHeaderContrast,
+        onLeave: () => document.documentElement.classList.remove('hero-expanded'),
+      })
+
       return () => {
+        introTimeline?.kill()
         window.clearTimeout(failsafe)
         document.removeEventListener('ef:reveal', onReveal)
+        document.documentElement.classList.remove('hero-expanded')
       }
     },
-    { scope: root },
+    { scope: root, dependencies: [reduced], revertOnUpdate: true },
   )
 
   useEffect(() => {
     document.documentElement.classList.add('hero-active')
-    return () => document.documentElement.classList.remove('hero-active')
+    return () => document.documentElement.classList.remove('hero-active', 'hero-expanded')
   }, [])
-
-  const current = films[reel]
 
   return (
     <section ref={root} id="topo" className="hero" data-theme="cream" aria-label="Abertura">
@@ -143,30 +188,21 @@ export default function Hero() {
         <div className="hero__window" aria-hidden="true" />
 
         <div className="hero__media">
-          <div className="hero__layer">
-            <Picture name={films[0].poster} alt="" priority sizes="100vw" className="hero__poster" style={{ objectPosition: films[0].focus }} />
+          <div className="hero__visual">
+            <div className="hero__layer">
+              <Picture name={current.poster} alt="" priority sizes="100vw" className="hero__poster" style={{ objectPosition: current.focus }} />
+            </div>
+            <PreviewVideo
+              className="hero__layer hero__video"
+              src={openingMedia.previewUhd || openingMedia.preview}
+              fallbackSrc={openingMedia.preview}
+              loop
+              style={{ objectPosition: current.focus }}
+            />
           </div>
-          {playReel &&
-            films.map((f, i) => (
-              <video
-                key={f.slug}
-                ref={(v) => {
-                  videos.current[i] = v
-                }}
-                className={`hero__layer hero__video${i === reel ? ' is-on' : ''}`}
-                src={filmMedia(f.slug).preview}
-                muted
-                playsInline
-                preload={i === 0 ? 'auto' : 'none'}
-                onEnded={() => setReel((r) => (r + 1) % films.length)}
-                aria-hidden="true"
-                tabIndex={-1}
-                style={{ objectPosition: f.focus }}
-              />
-            ))}
           <div className="hero__shade" aria-hidden="true" />
           <p className="hero__reel" aria-live="off">
-            <span>{String(reel + 1).padStart(2, '0')}</span> {current.title} · {current.category}
+            <span>01</span> {current.title} · {current.category}
           </p>
           <p className="hero__over" aria-hidden="true">
             entre uma cena<br />e outra.

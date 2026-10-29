@@ -13,6 +13,7 @@ export type Film = {
   logline: string
   description: string
   duration: string
+  ultraHd?: boolean
   poster: keyof typeof images
   posterAlt: string
   focus?: string         // object-position do pôster e do vídeo
@@ -35,6 +36,7 @@ export const films: Film[] = [
   },
   {
     slug: 'igreja-burn',
+    ultraHd: true,
     title: 'batismo',
     category: 'igreja',
     place: 'Igreja Burn · Guaianases',
@@ -49,6 +51,7 @@ export const films: Film[] = [
   },
   {
     slug: 'arena-xp',
+    ultraHd: true,
     title: 'arena xp',
     category: 'show ao vivo',
     client: 'Jhamal Andrade',
@@ -63,11 +66,16 @@ export const films: Film[] = [
   },
 ]
 
-export const filmMedia = (slug: string) => ({
-  hd: `/media/films/${slug}/film-1080.mp4`,
-  sd: `/media/films/${slug}/film-720.mp4`,
-  preview: `/media/films/${slug}/preview.mp4`,
-})
+export const filmMedia = (slug: string) => {
+  const ultraHd = films.find((film) => film.slug === slug)?.ultraHd
+  return {
+    uhd: ultraHd ? `/media/films/${slug}/film-4k.mp4` : null,
+    hd: `/media/films/${slug}/film-1080.mp4`,
+    sd: `/media/films/${slug}/film-720.mp4`,
+    preview: `/media/films/${slug}/preview.mp4`,
+    previewUhd: ultraHd ? `/media/films/${slug}/preview-4k.mp4` : null,
+  }
+}
 
 export const getFilm = (slug: string) => films.find((f) => f.slug === slug)
 export const image = (key: keyof typeof images) => images[key]

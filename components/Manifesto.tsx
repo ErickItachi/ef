@@ -4,9 +4,11 @@ import { useRef } from 'react'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/motion'
 import { Words } from './Split'
 import { Checker } from './Brand'
+import { useMotion } from './MotionProvider'
 
 export default function Manifesto() {
   const root = useRef<HTMLElement>(null)
+  const { reduced } = useMotion()
 
   useGSAP(
     () => {
@@ -19,7 +21,7 @@ export default function Manifesto() {
         .fromTo(el.querySelector('.manifesto__checker'), { xPercent: -60 }, { xPercent: 60, ease: 'none', duration: tl.duration() || 2 }, 0)
         .fromTo(el.querySelector('.manifesto__sign'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.3 }, '>-0.2')
     },
-    { scope: root },
+    { scope: root, dependencies: [reduced], revertOnUpdate: true },
   )
 
   return (
