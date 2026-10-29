@@ -1,5 +1,7 @@
 # Erick Filmes — site oficial
 
+> Contexto completo da marca (IDV em PDF, fonte, voz, decisões e pendências): veja [`contexto/README.md`](contexto/README.md).
+
 Next.js 16 · React 19 · TypeScript · GSAP/ScrollTrigger · Lenis.
 
 ## Rodar
