@@ -44,8 +44,18 @@ export default function MotionProvider({ children }: { children: React.ReactNode
   }, [reduced])
 
   const scrollTo = useCallback<MotionApi['scrollTo']>((target, opts = {}) => {
+    // a menu link scrolls while the menu is still closing: release the scroll lock first
+    document.documentElement.classList.remove('is-locked')
+    lenisRef.current?.start()
     const el = typeof target === 'string' ? document.querySelector<HTMLElement>(target) : target
     if (target !== 0 && !el && typeof target !== 'number') return
+    if (opts.immediate || prefersReducedMotion()) {
+      const top = typeof target === 'number' ? target : (el as HTMLElement).getBoundingClientRect().top + window.scrollY + (opts.offset ?? 0)
+      lenisRef.current?.resize()
+      window.scrollTo({ top, behavior: 'auto' })
+      lenisRef.current?.scrollTo(top, { immediate: true, force: true })
+      return
+    }
     if (lenisRef.current) {
       lenisRef.current.scrollTo((el ?? target) as HTMLElement | number, { immediate: opts.immediate || prefersReducedMotion(), offset: opts.offset ?? 0, duration: 1.4 })
     } else {

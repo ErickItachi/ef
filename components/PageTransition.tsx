@@ -59,13 +59,19 @@ export default function PageTransition({ children }: { children: React.ReactNode
     lastPath.current = pathname
     const hash = window.location.hash
     scrollTo(0, { immediate: true })
-    if (hash) requestAnimationFrame(() => requestAnimationFrame(() => scrollTo(hash, { immediate: true })))
+    if (hash) {
+      // wait for the new page's pinned sections to measure, then jump to the anchor (still under the checker)
+      window.setTimeout(() => {
+        ScrollTrigger.refresh()
+        scrollTo(hash, { immediate: true })
+      }, 120)
+    }
     if (prefersReducedMotion() || !busy.current) {
       busy.current = false
       document.dispatchEvent(new CustomEvent('ef:reveal', { detail: { delay: 0 } }))
       return
     }
-    requestAnimationFrame(() => open(0.05))
+    window.setTimeout(() => open(0.05), hash ? 220 : 0)
   }, [pathname, open, scrollTo])
 
   const navigate = useCallback(
