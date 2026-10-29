@@ -1,0 +1,37 @@
+{
+  "arena-xp": {
+    "src": "/media/img/arena-xp-2048.webp",
+    "srcSet": "/media/img/arena-xp-480.webp 480w, /media/img/arena-xp-960.webp 960w, /media/img/arena-xp-1440.webp 1440w, /media/img/arena-xp-2048.webp 2048w",
+    "width": 3840,
+    "height": 2160,
+    "placeholder": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAwAwCdASoYAA4APu1iqU2ppaQiMAgBMB2JZwAAW7l3iaUwAMtEdo/9ZFGb+Eyie2HmqYBgQ+i5JRdq+SM3ArOYAAA="
+  },
+  "erick-retrato": {
+    "src": "/media/img/erick-retrato-576.webp",
+    "srcSet": "/media/img/erick-retrato-480.webp 480w, /media/img/erick-retrato-576.webp 576w",
+    "width": 576,
+    "height": 1024,
+    "placeholder": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAACwBQCdASoYACsAPtFeoU2oJiMiOrmYAQAaCWkAAFvpYnR3K06SyvItSuXU6GmHfkBUFmjR10AA/vHTXfzFxh0NoMkrw6ZmrK03y7/gyjBHrPFP1oK1nVWcd120NfRvxA2wb7E/lETldjEN7KjB0Pzlj8fydE6V06HCAAAA"
+  },
+  "erick-set": {
+    "src": "/media/img/erick-set-682.webp",
+    "srcSet": "/media/img/erick-set-480.webp 480w, /media/img/erick-set-682.webp 682w",
+    "width": 682,
+    "height": 1024,
+    "placeholder": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAwBQCdASoYACQAPt1ao02opSMiNUgBEBuJaQAAeYJlCpSxYuUwrn5cRC+XhRVuqIXKAAD+6T/6VP4nvSQmwONxIEK1NmAyYN8FKNupEDf25c3Qm5Bg+bLXeK9WCxHxe6gWBDEYBHNBMV493nywbAm4AAA="
+  },
+  "igreja-burn": {
+    "src": "/media/img/igreja-burn-2048.webp",
+    "srcSet": "/media/img/igreja-burn-480.webp 480w, /media/img/igreja-burn-960.webp 960w, /media/img/igreja-burn-1440.webp 1440w, /media/img/igreja-burn-2048.webp 2048w",
+    "width": 3840,
+    "height": 2160,
+    "placeholder": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADQAwCdASoYAA4APu1kqk2ppaQiMAgBMB2JYwCdABMqn36Kr6ozqwAA/u8+IUGO3+mztaAERbhvVfIzdXX9AH7iIUnLI8G3Jo/8TV4u271YgtfNXu4rYAAA"
+  },
+  "larissa-roger": {
+    "src": "/media/img/larissa-roger-1920.webp",
+    "srcSet": "/media/img/larissa-roger-480.webp 480w, /media/img/larissa-roger-960.webp 960w, /media/img/larissa-roger-1440.webp 1440w, /media/img/larissa-roger-1920.webp 1920w",
+    "width": 1920,
+    "height": 1080,
+    "placeholder": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAwCdASoYAA4APu1iqU2ppaOiMAgBMB2JYwCsACPf0jTM1s4xq5sQAP1s7Hung0FCIU6EPfpqHKNDXaue7x89GSJF8jmrYxv6wZzXQqjWlM3/xja50cfA8bAZIoblJgA="
+  }
+}
